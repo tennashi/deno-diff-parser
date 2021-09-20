@@ -4,7 +4,7 @@ export type Diff = {
   hunks: Hunk[]
 }
 
-type Hunk = {
+export type Hunk = {
   header: HunkHeader
   lines: Line[]
 }
