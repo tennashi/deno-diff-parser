@@ -23,6 +23,34 @@ type Line = {
 
 const hunkHeaderRegexp = /@@ -(\d+),?(\d*) \+(\d+),?(\d*) @@/
 
+export function toString(diff: Diff): string {
+  if (diff.hunks.length === 0) {
+    return "";
+  }
+  let res: string
+  res = '--- ' + diff.beforeFileName + '\n'
+  res += '+++ ' + diff.afterFileName + '\n'
+  diff.hunks.forEach((hunk: Hunk) => {
+    res += '@@ -' + hunk.header.beforeStartLine + ',' + hunk.header.beforeLines + ' +' + hunk.header.afterStartLine + ',' + hunk.header.afterLines + ' @@\n'
+    hunk.lines.forEach((line: Line) => {
+      switch (line.mark) {
+        case 'add':
+          res += '+';
+          break;
+        case 'delete':
+          res += '-';
+          break;
+        case 'nomodified':
+          res += ' ';
+          break;
+      }
+      res += line.text + '\n';
+    })
+  })
+
+  return res;
+}
+
 export function parse(text: string): Diff[] {
   const diffs: Diff[] = [];
   let currentDiffIndex = 0;
